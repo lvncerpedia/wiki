@@ -1,0 +1,13 @@
+# Kubernetes
+
+複数のコンテナ化されたアプリケーションを効率よく管理・自動化するための「コンテナオーケストレーションツール」
+
+![https://kubernetes.io/images/docs/kubernetes-cluster-architecture.svg](https://kubernetes.io/images/docs/kubernetes-cluster-architecture.svg)
+
+| Components       | Description                                               |
+| ---------------- | --------------------------------------------------------- |
+| Pod              | コンテナの最小単位（1 つ以上のコンテナをまとめたもの）    |
+| Deployment       | Pod を管理して、複製や更新を楽にしてくれる                |
+| Service          | Pod へのアクセスを安定させる（LoadBalancer みたいな感じ） |
+| ConfigMap/Secret | 設定情報や機密情報を管理                                  |
+| Namespace        | リソースを論理的に分ける                                  |
