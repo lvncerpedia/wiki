@@ -1,0 +1,79 @@
+name: Sync wiki topics
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.REPO_WRITE_TOKEN }}
+
+      - name: Checkout wiki
+        uses: actions/checkout@v4
+        with:
+          repository: lvncerpedia/wiki
+          path: ../wiki
+
+      - uses: astral-sh/setup-uv@v5
+
+      - name: Sync repos.yaml from wiki
+        id: sync
+        working-directory: .scripts
+        run: |
+          uv sync
+          uv run sync_wiki_topics.py
+
+      - name: Create pull request
+        if: steps.sync.outputs.new_repos_added == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.REPO_WRITE_TOKEN }}
+          branch: chore/sync-wiki-topics
+          delete-branch: true
+          title: "chore: add ${{ steps.sync.outputs.pr_title_suffix }} to 未分類"
+          commit-message: "chore: add ${{ steps.sync.outputs.pr_title_suffix }} to 未分類"
+          body: |
+            ## wiki トピックの同期
+
+            `wiki` にある新しいトピックを `repos.yaml` の `管理` → `未分類` に追加しました。
+
+            ### 追加されたトピック
+
+            ${{ steps.sync.outputs.new_repos_body }}
+
+            ### 対応してください
+
+            - [ ] 上記トピックを正しいカテゴリへ移動する
+            - [ ] `memo` フィールドに説明を記入する
+            - [ ] 未分類が空になると、この PR は自動マージされます
+
+            ---
+            _このPRは GitHub Actions により自動作成されました。_
+          add-paths: |
+            repos.yaml
+
+      - name: Merge sync PR when 未分類 is empty
+        if: steps.sync.outputs.uncategorized_empty == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.REPO_WRITE_TOKEN }}
+        run: |
+          pr_number=$(gh pr list --head chore/sync-wiki-topics --state open --json number --jq '.[0].number // empty')
+          if [ -z "$pr_number" ]; then
+            echo "No open sync PR to merge"
+            exit 0
+          fi
+          gh pr merge "$pr_number" --squash --delete-branch \
+            --subject "chore: sync wiki topics" \
+            --body "未分類が空になったため、この PR を自動マージしました。"
