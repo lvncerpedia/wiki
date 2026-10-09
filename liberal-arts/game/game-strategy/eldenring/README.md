@@ -1,0 +1,8 @@
+# ELDENRING
+
+| 攻略情報 | URL |
+| - | - |
+| 近接武器一覧 | [https://kamikouryaku.net/eldenring/?全武器比較表](https://kamikouryaku.net/eldenring/?%E5%85%A8%E6%AD%A6%E5%99%A8%E6%AF%94%E8%BC%83%E8%A1%A8) |
+| 魔法祈祷一覧 | [https://kamigame.jp/eldenring/page/](https://kamigame.jp/eldenring/page/194121588017201607.html) |
+| チャート | [github.com/lvncers-personal-notes/game-strategy/eldenring/CHART.md](https://github.com/lvncers-personal-notes/game-strategy/blob/main/eldenring/CHART.md) |
+| 装備と防御、カット率 | https://www.youtube.com/watch?v=dFnAGOZ9t4Y |
